@@ -9,7 +9,8 @@
     "prod": "pm2 stop all && pm2 kill && tsc && pm2 start ./bin/app.js",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "audit": "npm audit --audit-level=moderate"
   },
   "author": "Chirag Jadhav",
   "license": "ISC",
