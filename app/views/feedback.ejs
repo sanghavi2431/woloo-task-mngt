@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback</title>
+    <style>
+        html {
+            display: flex;
+            justify-content: center;
+            height: 100%;
+            align-items: center;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+        }
+
+        form {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #f6e05e;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        label {
+            color: #333;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 30px;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 70px;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 24px;
+            color: #f6e05e;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .star-rating input:checked~label {
+            color: #f6e05e;
+        }
+
+        button {
+            padding: 12px;
+            padding-right: 20px;
+            padding-left: 20px;
+            background-color: #fff;
+            color: #333;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        button:hover {
+            background-color: #f6e05e;
+        }
+
+        h4 {
+            font-weight: 300;
+            font-size: small;
+            color: #564915;
+            text-align: center;
+            margin-top: 0px;
+        }
+
+        .flex {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+
+        .star-icon {
+            width: 8px;
+            height: 8px;
+            fill: currentColor;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
+        .text-gray-300 {
+            fill: #718096;
+        }
+
+        .text-yellow-400 {
+            fill: #f6e05e;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<script>
+    const stars = {
+        level1: false,
+        level2: false,
+        level3: false,
+        level4: false,
+        level5: false
+    };
+    let improvementText = ""
+    let otherFeedback = ""
+    function postData() {
+        let count = Object.values(stars).filter(Boolean).length;
+        const TextBox = document.getElementById('textBox').value;
+        const name = document.getElementById('name').value;
+        const mobileInput = document.getElementById('mobile');
+        const mobileError = document.getElementById('mobileError');
+        const facility_id = document.getElementById('facilityId').value;
+
+        console.log(facility_id)
+
+        // Check if the input matches the pattern
+        if (mobileInput.validity.patternMismatch) {
+            mobileError.textContent = 'Please enter a valid 10-digit mobile number.';
+            return false;
+        }
+        if (count) {
+            console.log("count", count, improvementText, TextBox, mobileInput.value, name)
+
+
+        }
+        else {
+            alert("Please Select star")
+        }
+
+        // console.log(rating, comments, mobile, guestName)
+        //const facility_id = document.getElementById('facilityId').value;
+
+        const data = {
+            "guest_name": name,
+            "mobile": mobileInput.value,
+            "comments": TextBox,
+            "rating": count,
+            "facility_id": facility_id,
+            "improvement_tags": []
+        }
+        console.log(data)
+        // const form_div = document.getElementById('form_div');
+        // form_div.style.display = 'none';
+        // const thankyou_div = document.getElementById('thankyou_div');
+        // thankyou_div.style.display = 'block';
+
+        // Axios POST request
+        axios.post('/api/whms/feedback/createFeedBack', data)
+            .then(response => {
+                // Handle the response from the server
+                console.log(response.data);
+                const form_div = document.getElementById('form_div');
+                form_div.style.display = 'none';
+                const thankyou_div = document.getElementById('thankyou_div');
+                thankyou_div.style.display = 'block';
+
+
+            })
+            .catch(error => {
+                // Handle any errors that occurred during the request
+                alert("Something went wrong")
+                console.error('Error:', error);
+            });
+    }
+
+
+    function handleStarClick(level) {
+        updateStarStyle(level);
+    }
+    function handleClick(level) {
+        let incomingNum = +level.slice(-1)
+        const review = document.getElementById(`exp${incomingNum}`);
+        for (let i = 1; i <= 3; i++) {
+            const review = document.getElementById(`exp${i}`);
+            review.style.backgroundColor = "white"
+
+        }
+        review.style.backgroundColor = "#f6e05e"
+        console.log(review.innerHTML)
+        improvementText = review.innerHTML
+    }
+
+    function updateStarStyle(level) {
+        let incomingNum = +level.slice(-1)
+        const review = document.getElementById(`${incomingNum}`);
+        for (let i = 1; i <= 5; i++) {
+            const star = document.getElementById("level" + i);
+            const review = document.getElementById(`${i}`);
+
+            if (i <= incomingNum) {
+                stars["level" + i] = true;
+                star.classList.remove('text-gray-300');
+                star.classList.add('text-yellow-400');
+            } else {
+                stars["level" + i] = false;
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300');
+            }
+            review.style.backgroundColor = "white"
+
+        }
+        review.style.backgroundColor = "#f6e05e"
+    }
+
+</script>
+
+
+<body>
+    <form action="#" id="feedbackForm" style="background-color:#424345;height: 650px;">
+        <div id="form_div">
+            <div style="display: flex; justify-content: center;font-size: larger;">
+                <div style="color: #f6e05e; margin-bottom: 20px; margin-top: 10px;">Review Us</div>
+            </div>
+            <div>
+                <!-- <div style="color: #f6e05e; margin-bottom: 20px; margin-top: 10px;">Any other feedback</div> -->
+                <input id="facilityId" type="text" placeholder="name" value="<%=facilityId%>" hidden />
+                <input id="name" type="text" placeholder="name" required />
+                <input id="mobile" type="tel" pattern="[0-9]{10}" required placeholder="Enter Mobile Number" />
+                <span id="mobileError" style="color: red; font-size: 12px;"></span>
+
+            </div>
+            <div class="flex items-center " style="border-bottom:2px solid #ccc ;display:flex  ">
+                <svg id="level1" onclick=handleStarClick('level1') onmouseenter=handleHoverStarChange('level1')
+                    aria-hidden="true" style="width: 40px; " fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <title>First star</title>
+                    <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                </svg>
+                <svg id="level2" onclick=handleStarClick('level2') onmouseenter=handleHoverStarChange('level2')
+                    aria-hidden="true" style="width: 40px;" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <title>Second star</title>
+                    <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                </svg>
+                <svg id="level3" onclick=handleStarClick('level3') onmouseenter=handleHoverStarChange('level3')
+                    aria-hidden="true" style="width: 40px;" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <title>Third star</title>
+                    <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                </svg>
+                <svg id="level4" onclick=handleStarClick('level4') onmouseenter=handleHoverStarChange('level4')
+                    aria-hidden="true" style="width: 40px;" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <title>Fourth star</title>
+                    <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                </svg>
+                <svg id="level5" onclick=handleStarClick('level5') onmouseenter=handleHoverStarChange('level5')
+                    aria-hidden="true" style="width: 40px;" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <title>Fifth star</title>
+                    <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                    </path>
+                </svg>
+            </div>
+            <div>
+                <div style="color: #f6e05e; margin-bottom: 20px;">Rate your experience</div>
+                <div style="display: flex;flex-direction: column;gap: 16px;margin-bottom: 10px;">
+                    <div><span id="5"
+                            style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small;  cursor: pointer;">My
+                            experience was amazing</span></div>
+                    <div><span id="4"
+                            style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small; cursor: pointer;">Really
+                            Liked the facility</span></div>
+                    <div><span id="3"
+                            style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small; cursor: pointer;">I
+                            am satisfied with overall experience</span></div>
+                    <div><span id="2"
+                            style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small; cursor: pointer;">Good,but
+                            could have been better</span></div>
+                    <div><span id="1"
+                            style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small; cursor: pointer;">Need
+                            Improvements</span></div>
+                </div>
+            </div>
+            <!-- <div style="border-top:2px solid #ccc ;">
+            <div style="color: #f6e05e; margin-bottom: 20px; margin-top: 10px;">Tell us where we can improve</div>
+            <div style="display: flex;flex-direction: column;gap: 16px;margin-bottom: 10px;">
+                <div><span id="exp1" onclick=handleClick('exp1')
+                        style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small; cursor: pointer;"
+                        value="COVID Improvement">COVID Improvement</span></div>
+                <div><span id="exp2" onclick=handleClick('exp2')
+                        style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small; cursor: pointer;">Safety
+                        Improvement</span></div>
+                <div><span id="exp3" onclick=handleClick('exp3')
+                        style="background-color: #fff; padding: 5px;padding-right: 10px;padding-left: 10px; border-radius: 50px;font-size: small; cursor: pointer;">Hygeine
+                        Improvement</span></div>
+            </div>
+        </div> -->
+            <div style="border-top:2px solid #ccc ;">
+                <div style="color: #f6e05e; margin-bottom: 20px; margin-top: 10px;">Any other feedback</div>
+                <textarea placeholder="Type here..." id="textBox"></textarea>
+            </div>
+            <div class="flex">
+                <button type="button" onclick=postData()>Submit</button>
+            </div>
+        </div>
+
+        <div id="thankyou_div" style="height: 500px;display: none;">
+            <div style="display: flex; justify-content: center;align-items: center; font-size: larger;height: 100%; ">
+                <div style="color: #f6e05e; margin-bottom: 20px; margin-top: 10px;">Thank you for the feedback!</div>
+            </div>
+        </div>
+    </form>
+
+</body>
+
+</html>

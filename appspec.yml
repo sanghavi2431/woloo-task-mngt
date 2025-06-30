@@ -1,0 +1,16 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ubuntu/Woloo-Task-Management-1 # Adjust based on your EC2 directory structure 
+
+hooks: 
+  AfterInstall:
+    - location: scripts/AfterInstallHook.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/Applicationstart.sh
+      timeout: 300
+      runas: root

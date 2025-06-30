@@ -1,0 +1,28 @@
+name: Deploy to EC2 on Dev Branch Merge
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to Dev EC2
+        run: |
+          # Add your deployment script here
+          # For example, you can use SSH to copy files and restart your application
+          ssh -i ${{ secrets.EC2_SSH_KEY }} ubuntu@192.168.155.50 'cd Woloo-Task-Management && git pull && sh scripts/AfterInstallHook.sh && sh scripts/Applicationstart.sh

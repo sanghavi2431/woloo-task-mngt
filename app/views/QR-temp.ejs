@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+    <title>Document</title>
+</head>
+<style>
+    .main {
+        text-align: center;
+        width: 400px;
+        /* height: 500px;
+        margin: 0 auto; */
+        border: 1px solid;
+    }
+
+    .main h1 {
+        font-size: 18px;
+        color: yellow;
+        margin: 0;
+        padding: 10px;
+    }
+
+    .main .head {
+        background-color: #012340;
+        padding: 5px;
+    }
+
+    .mid {
+        background-color: yellow;
+    }
+
+    .end {
+        background-color: #012340;
+        height: 64px;
+    }
+
+    .mid h2 {
+        font-size: 16px;
+        padding-bottom: 8px;
+        padding-top: 8px;
+        margin: 0px;
+    }
+
+    .mid .emoji {
+        height: 50px;
+    }
+
+    .end h2 {
+        padding-top: 6px;
+        color: yellow;
+        font-size: 21px;
+        margin: 0px;
+    }
+
+    .mid .text-top h2 {
+        font-size: 16px;
+        margin: -30px 0px 10px 0px;
+    }
+
+    div.qrcode {
+        margin: 0 auto;
+        width: 128px;
+    }
+
+    .mid .feedback-emoji {
+        margin-top: -25px;
+    }
+
+    div.qrcode {
+        margin: 0 auto;
+        width: 88px;
+        border-top: 6px solid #ffff;
+        border-bottom: 6px solid #ffff;
+        padding: 10px 25px 10px 12px;
+        border-left: 6px solid #ffff;
+        border-right: 6px solid #ffff;
+        border-radius: 18px;
+    }
+
+    .end h4 {
+        margin: 0;
+        color: yellow;
+        margin: 6px;
+        font-size: 14px;
+        font-weight: 200;
+    }
+
+    .main-qr {
+        display: inline-flex;
+        margin: 20px;
+    }
+</style>
+
+<body>
+    <div>
+        <%for(let i=0;i<facilityGroup.length;i++){%>
+            <div class="facility_<%=facilityGroup[i].facility_id%> main-qr">
+                <div class="main">
+                    <div class="head">
+                        <h1>HOW WAS THE HYGIENE QUALITY OF THIS TOILET TODAY?</h1>
+                    </div>
+                    <div class="mid">
+                        <img class="feedback-emoji"
+                            src="https://woloo-stagging.s3.ap-south-1.amazonaws.com/assets/emoji.png" alt="" />
+                        <div class="text-top">
+                            <h2>YOUR FEEDBACK HELP US IMPROVE!</h2>
+                        </div>
+                        <div id="qrcode_facility_<%=facilityGroup[i].facility_id%>" class="qrcode"></div>
+                        <div class="text-bottom">
+                            <h2>PLEASE SCAN QR CODE WITH YOUR PHONE CAMERA AND RATE YOUR EXPERIENCE</h2>
+                        </div>
+                    </div>
+
+                    <div class="end">
+                        <h2>Woloo Assurance of Hygiene (WAH)</h2>
+                        <h4>
+                            <%=facilityGroup[i].facility_name%>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function generateQRCode() {
+                    // Get the input value
+                    var inputValue = '<%=link%><%=facilityGroup[i].facility_id%>';
+
+                    // Create QR code
+                    var qrcode = new QRCode(document.getElementById('qrcode_facility_<%=facilityGroup[i].facility_id%>'), {
+                        text: inputValue,
+                        width: 100,
+                        height: 100
+                    });
+
+                    // You can also customize the QR code further, e.g., change the color:
+                    // qrcode.colorDark = "#000000";
+                    // qrcode.colorLight = "#ffffff";
+                }
+
+                generateQRCode()
+            </script>
+            <%}%>
+    </div>
+
+</body>
+
+</html>
