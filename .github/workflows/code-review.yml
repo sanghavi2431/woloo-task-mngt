@@ -1,38 +1,34 @@
-name: Code Review
+name: Code Review (dev branch only)
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   review:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Run ESLint (no auto-fix)
+      - name: Run ESLint
         run: npm run lint
 
-      - name: Check code formatting with Prettier
+      - name: Run Prettier Check
         run: npm run format:check
 
-      - name: Check for vulnerabilities (npm audit)
-        run: npm audit --audit-level=high
+      - name: Run npm Audit
+        run: npm run audit
 
       - name: Run Snyk Scan
-        uses: snyk/actions/node@v1
-        with:
-          command: test
+        run: npx snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
