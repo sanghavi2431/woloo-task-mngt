@@ -23,7 +23,7 @@ jobs:
           npm init -y
           npm install --save-dev eslint@9.3.0 prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-prettier eslint-config-prettier
 
-      - name: Create temporary ESLint config
+      - name: Create temporary ESLint config (.mjs format)
         run: |
           echo "export default {
             files: ['**/*.ts'],
@@ -38,12 +38,12 @@ jobs:
               '@typescript-eslint/no-unused-vars': 'warn',
               'prettier/prettier': 'warn'
             }
-          };" > eslint.config.js
+          };" > eslint.config.mjs
 
       - name: Run ESLint (show issues, don’t fail build)
         run: |
           echo "📌 ESLint Report"
-          npx eslint . || true
+          npx eslint . --config eslint.config.mjs || true
 
       - name: Run Prettier Check (show issues, don’t fail build)
         run: |
