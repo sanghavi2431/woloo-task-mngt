@@ -1,4 +1,4 @@
-name: Code Quality Report
+name: Code Review
 
 on:
   push:
@@ -6,46 +6,33 @@ on:
       - main
 
 jobs:
-  lint-format:
+  review:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
 
-      - name: Install ESLint and Prettier temporarily
-        run: |
-          npm init -y
-          npm install --save-dev eslint@9.3.0 prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-prettier eslint-config-prettier
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Create temporary ESLint config (.mjs format)
-        run: |
-          echo "export default {
-            files: ['**/*.ts'],
-            languageOptions: {
-              parser: '@typescript-eslint/parser',
-              parserOptions: { ecmaVersion: 'latest', sourceType: 'module' }
-            },
-            plugins: {
-              '@typescript-eslint': require('@typescript-eslint/eslint-plugin')
-            },
-            rules: {
-              '@typescript-eslint/no-unused-vars': 'warn',
-              'prettier/prettier': 'warn'
-            }
-          };" > eslint.config.mjs
+      - name: Run ESLint (no auto-fix)
+        run: npm run lint
 
-      - name: Run ESLint (show issues, don’t fail build)
-        run: |
-          echo "📌 ESLint Report"
-          npx eslint . --config eslint.config.mjs || true
+      - name: Check code formatting with Prettier
+        run: npm run format:check
 
-      - name: Run Prettier Check (show issues, don’t fail build)
-        run: |
-          echo "📌 Prettier Report"
-          npx prettier . --check "**/*.ts" || true
+      - name: Check for vulnerabilities (npm audit)
+        run: npm audit --audit-level=high
+
+      - name: Run Snyk Scan
+        uses: snyk/actions/node@v1
+        with:
+          command: test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
