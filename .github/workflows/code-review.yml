@@ -21,12 +21,29 @@ jobs:
       - name: Install ESLint and Prettier temporarily
         run: |
           npm init -y
-          npm install --save-dev eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-config-prettier eslint-plugin-prettier
+          npm install --save-dev eslint@9.3.0 prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-prettier eslint-config-prettier
+
+      - name: Create temporary ESLint config
+        run: |
+          echo "export default {
+            files: ['**/*.ts'],
+            languageOptions: {
+              parser: '@typescript-eslint/parser',
+              parserOptions: { ecmaVersion: 'latest', sourceType: 'module' }
+            },
+            plugins: {
+              '@typescript-eslint': require('@typescript-eslint/eslint-plugin')
+            },
+            rules: {
+              '@typescript-eslint/no-unused-vars': 'warn',
+              'prettier/prettier': 'warn'
+            }
+          };" > eslint.config.js
 
       - name: Run ESLint (show issues, don’t fail build)
         run: |
           echo "📌 ESLint Report"
-          npx eslint . --ext .ts || true
+          npx eslint . || true
 
       - name: Run Prettier Check (show issues, don’t fail build)
         run: |
