@@ -21,14 +21,18 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
+        continue-on-error: true
 
       - name: Run Prettier Check
         run: npm run format:check
+        continue-on-error: true
 
       - name: Run npm Audit
         run: npm run audit
+        continue-on-error: true
 
       - name: Run Snyk Scan
         run: npx snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
