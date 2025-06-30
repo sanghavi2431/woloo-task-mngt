@@ -1,4 +1,4 @@
-name: Code Review (dev branch only)
+name: Code Review
 
 on:
   push:
