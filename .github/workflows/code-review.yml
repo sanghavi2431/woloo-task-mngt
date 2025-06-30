@@ -23,16 +23,12 @@ jobs:
           npm init -y
           npm install --save-dev eslint prettier @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-config-prettier eslint-plugin-prettier
 
-      - name: Run ESLint (only show issues, don't fail)
+      - name: Run ESLint (show issues, don’t fail build)
         run: |
           echo "📌 ESLint Report"
-          npx eslint . --ext .ts --no-eslintrc \
-            --parser=@typescript-eslint/parser \
-            --plugin=@typescript-eslint \
-            --plugin=prettier \
-            --rule "prettier/prettier:warn" || true
+          npx eslint . --ext .ts || true
 
-      - name: Run Prettier Check (only show issues, don't fail)
+      - name: Run Prettier Check (show issues, don’t fail build)
         run: |
           echo "📌 Prettier Report"
           npx prettier . --check "**/*.ts" || true
