@@ -31,23 +31,15 @@ jobs:
         run: npm run audit
         continue-on-error: true
 
-      - name: Run Snyk Scan
-        run: npx snyk test
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true
-
-      - name: Run Snyk Scan
+      - name: Run Snyk Scan and Save Report
         run: |
           npx snyk test --severity-threshold=low | tee snyk-report.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
 
-      # Upload reports as artifacts
-      - name: Upload Reports as Artifact
+      - name: Upload Snyk Report
         uses: actions/upload-artifact@v4
         with:
-          name: code-review-reports
-          path: |
-            snyk-report.txt
+          name: snyk-report
+          path: snyk-report.txt
