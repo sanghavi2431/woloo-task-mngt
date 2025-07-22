@@ -37,14 +37,17 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
 
-      - name: Run Snyk Scan and Save JSON Report
-        run: npx snyk test --json > snyk-report.json
+      - name: Run Snyk Scan
+        run: |
+          npx snyk test --severity-threshold=low | tee snyk-report.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
 
-      - name: Upload Snyk Report as Artifact
+      # Upload reports as artifacts
+      - name: Upload Reports as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: snyk-report
-          path: snyk-report.json
+          name: code-review-reports
+          path: |
+            snyk-report.txt
