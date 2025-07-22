@@ -36,3 +36,15 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
+
+      - name: Run Snyk Scan and Save JSON Report
+        run: npx snyk test --json > snyk-report.json
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Snyk Report as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: snyk-report
+          path: snyk-report.json
