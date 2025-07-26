@@ -31,18 +31,27 @@ jobs:
         run: npm run audit
         continue-on-error: true
 
-      - name: Run Snyk Scan and Save Report
+      - name: Run Snyk Dependency Test
         run: |
-          npx snyk test --severity-threshold=low | tee snyk-report.txt
+          npx snyk test --severity-threshold=low | tee snyk-dependency-report.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
 
-      - name: Upload Snyk Report
+      - name: Run Snyk Code Scan
+        run: |
+          npx snyk code test --severity-threshold=low | tee snyk-code-report.txt
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Snyk Reports
         uses: actions/upload-artifact@v4
         with:
-          name: snyk-report
-          path: snyk-report.txt
+          name: snyk-reports
+          path: |
+            snyk-dependency-report.txt
+            snyk-code-report.txt
 
       - name: Install Semgrep
         run: |
